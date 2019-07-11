@@ -60,7 +60,8 @@ function love.load()
     }
     
     -- initialize our virtual resolution, which will be rendered within our
-    -- actual window no matter its dimensions
+    -- actual window no matter its dimensionsi
+    -- these constant values are kept in a seperate file
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         vsync = true,
         fullscreen = false,
@@ -69,22 +70,22 @@ function love.load()
 
     -- set up our sound effects; later, we can just index this table and
     -- call each entry's `play` method
-    gsounds = {
-        ['paddle-hit'] = love.audio.newsource('sounds/paddle_hit.wav', 'static'),
-        ['score'] = love.audio.newsource('sounds/score.wav', 'static'),
-        ['wall-hit'] = love.audio.newsource('sounds/wall_hit.wav', 'static'),
-        ['confirm'] = love.audio.newsource('sounds/confirm.wav', 'static'),
-        ['select'] = love.audio.newsource('sounds/select.wav', 'static'),
-        ['no-select'] = love.audio.newsource('sounds/no-select.wav', 'static'),
-        ['brick-hit-1'] = love.audio.newsource('sounds/brick-hit-1.wav', 'static'),
-        ['brick-hit-2'] = love.audio.newsource('sounds/brick-hit-2.wav', 'static'),
-        ['hurt'] = love.audio.newsource('sounds/hurt.wav', 'static'),
-        ['victory'] = love.audio.newsource('sounds/victory.wav', 'static'),
-        ['recover'] = love.audio.newsource('sounds/recover.wav', 'static'),
-        ['high-score'] = love.audio.newsource('sounds/high_score.wav', 'static'),
-        ['pause'] = love.audio.newsource('sounds/pause.wav', 'static'),
-
-        ['music'] = love.audio.newsource('sounds/music.wav', 'static')
+    gSounds = {
+        ['paddle-hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static'),
+        ['score'] = love.audio.newSource('sounds/score.wav', 'static'),
+        ['wall-hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static'),
+        ['confirm'] = love.audio.newSource('sounds/confirm.wav', 'static'),
+        ['select'] = love.audio.newSource('sounds/select.wav', 'static'),
+        ['no-select'] = love.audio.newSource('sounds/no-select.wav', 'static'),
+        ['brick-hit-1'] = love.audio.newSource('sounds/brick-hit-1.wav', 'static'),
+        ['brick-hit-2'] = love.audio.newSource('sounds/brick-hit-2.wav', 'static'),
+        ['hurt'] = love.audio.newSource('sounds/hurt.wav', 'static'),
+        ['victory'] = love.audio.newSource('sounds/victory.wav', 'static'),
+        ['recover'] = love.audio.newSource('sounds/recover.wav', 'static'),
+        ['high-score'] = love.audio.newSource('sounds/high_score.wav', 'static'),
+        ['pause'] = love.audio.newSource('sounds/pause.wav', 'static'),
+        --music track
+        ['music'] = love.audio.newSource('sounds/music.wav', 'static')
     }
 
     -- the state machine we'll be using to transition between various states
@@ -165,7 +166,8 @@ end
 ]]
 function love.draw()
     -- begin drawing with push, in our virtual resolution
-    push:apply('start')
+    -- push:apply('start') !! this one was deprecated !!
+    push:start()
 
     -- background should be drawn regardless of state, scaled to fit our
     -- virtual resolution
@@ -186,7 +188,8 @@ function love.draw()
     -- display FPS for debugging; simply comment out to remove
     displayFPS()
     
-    push:apply('end')
+    push:finish()
+    -- push:apply('end')
 end
 
 --[[
