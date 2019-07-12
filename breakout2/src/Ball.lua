@@ -27,6 +27,8 @@ function Ball:init(skin)
 
     -- this will effectively be the color of our ball, and we will index
     -- our table of Quads relating to the global block texture using this
+    -- self,skin, later, will be set at random in order to choose the color of our 
+    -- ball
     self.skin = skin
 end
 
@@ -35,6 +37,7 @@ end
     and returns true if the bounding boxes of this and the argument overlap.
 ]]
 function Ball:collides(target)
+    -- Again here AABB collision detection  
     -- first, check to see if the left edge of either is farther to the right
     -- than the right edge of the other
     if self.x > target.x + target.width or target.x > self.x + self.width then

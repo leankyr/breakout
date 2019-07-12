@@ -61,6 +61,7 @@ function love.load()
 
     -- Quads we will generate for all of our textures; Quads allow us
     -- to show only part of a texture and not the entire thing
+    -- ball is 8 pixels wide by 8 pixels tall 
     gFrames = {
         ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
         ['balls'] = GenerateQuadsBalls(gTextures['main'])

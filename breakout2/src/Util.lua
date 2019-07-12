@@ -92,6 +92,12 @@ end
     sprite sheet. For this, we have to piece out the balls a little more
     manually, since they are in an awkward part of the sheet and small.
 ]]
+
+--[[ 
+    Same thing as before but now we generate the balls
+    This iteration goes left to right
+    Seperate table for paddles balls and bricks later
+--]]
 function GenerateQuadsBalls(atlas)
     local x = 96
     local y = 48

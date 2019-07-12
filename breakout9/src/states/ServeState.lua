@@ -22,6 +22,7 @@ function ServeState:enter(params)
     self.bricks = params.bricks
     self.health = params.health
     self.score = params.score
+    -- we get the level from the make level class to print it I guess
     self.level = params.level
 
     -- init new ball (random color for fun)

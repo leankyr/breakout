@@ -51,6 +51,10 @@ function PlayState:update(dt)
 
     if self.ball:collides(self.paddle) then
         -- reverse Y velocity if collision detected between paddle and ball
+        -- BUG: The ball might get stuck and bounce on the paddle
+        -- We should always reset the position of the ball, when we
+        -- do AABB collision detection,
+        -- so that we not get and infinite collision loop
         self.ball.dy = -self.ball.dy
         gSounds['paddle-hit']:play()
     end

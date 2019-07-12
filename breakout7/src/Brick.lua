@@ -48,7 +48,7 @@ function Brick:hit()
         else
             self.color = self.color - 1
         end
-    else
+    else -- if self.tier == 0 obviously
         -- if we're in the first tier and the base color, remove brick from play
         if self.color == 1 then
             self.inPlay = false

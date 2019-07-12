@@ -27,12 +27,17 @@ function Brick:init(x, y)
     self.height = 16
     
     -- used to determine whether this brick should be rendered
+    -- if it is in play otherwise do not render it
+    -- NOT the best practise for bigger games
+    -- but ok for small scale games
     self.inPlay = true
 end
 
 --[[
     Triggers a hit on the brick, taking it out of play if at 0 health or
     changing its color otherwise.
+    Check if AABB collision happend play the sound and stop rendering it, 
+    turning the bool False
 ]]
 function Brick:hit()
     -- sound on hit

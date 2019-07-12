@@ -37,11 +37,14 @@ function LevelMaker.createMap(level)
     local numRows = math.random(1, 5)
 
     -- randomly choose the number of columns, ensuring odd
+    -- to get desired symmetry
     local numCols = math.random(7, 13)
     numCols = numCols % 2 == 0 and (numCols + 1) or numCols
 
     -- highest possible spawned brick color in this level; ensure we
     -- don't go above 3
+    -- every 5 levels we increment in tier and then we go 
+    -- back at blue
     local highestTier = math.min(3, math.floor(level / 5))
 
     -- highest color of the highest tier
@@ -50,8 +53,20 @@ function LevelMaker.createMap(level)
     -- lay out bricks such that they touch each other and fill the space
     for y = 1, numRows do
         -- whether we want to enable skipping for this row
+        -- if skip is true to generate brick every other iteration
+        -- if math.random retrurns 1 then 1 == 1 true
+        -- true and true is true
+        -- true or false is true
+        -- skipPattern gets true
+        -- if math.random returns 2 then 1 == 2 false
+        -- false and true is false
+        -- false or false is false 
+        -- skipPattern gets false
+        --
+        -- The same principal applies to the other flags(alternatePatter,
+        -- skipFlag, alternateFlag) too
         local skipPattern = math.random(1, 2) == 1 and true or false
-
+        -- alternatePattern is true alternate colors every other iteration
         -- whether we want to enable alternating colors for this row
         local alternatePattern = math.random(1, 2) == 1 and true or false
         

@@ -87,7 +87,7 @@ function PlayState:update(dt)
             -- go to our victory screen if there are no more bricks left
             if self:checkVictory() then
                 gSounds['victory']:play()
-
+            -- again pass everything to the next state 
                 gStateMachine:change('victory', {
                     level = self.level,
                     paddle = self.paddle,
@@ -201,6 +201,7 @@ function PlayState:render()
     end
 end
 
+-- if there are no brick on the map (brick.inPlay == false) then we won the level
 function PlayState:checkVictory()
     for k, brick in pairs(self.bricks) do
         if brick.inPlay then

@@ -31,6 +31,7 @@ function PlayState:init()
     self.ball.y = VIRTUAL_HEIGHT - 42
 
     -- use the "static" createMap function to generate a bricks table
+    -- the level maker class is a different class
     self.bricks = LevelMaker.createMap()
 end
 
@@ -59,6 +60,7 @@ function PlayState:update(dt)
     end
 
     -- detect collision across all bricks with the ball
+    -- bricks created from the level maker
     for k, brick in pairs(self.bricks) do
 
         -- only check collision if we're in play

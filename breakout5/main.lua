@@ -209,13 +209,13 @@ end
 function renderHealth(health)
     -- start of our health rendering
     local healthX = VIRTUAL_WIDTH - 100
-    
+    -- first draw the full hearts   
     -- render health left
     for i = 1, health do
         love.graphics.draw(gTextures['hearts'], gFrames['hearts'][1], healthX, 4)
         healthX = healthX + 11
     end
-
+    -- then above draw the missing hearts
     -- render missing health
     for i = 1, 3 - health do
         love.graphics.draw(gTextures['hearts'], gFrames['hearts'][2], healthX, 4)

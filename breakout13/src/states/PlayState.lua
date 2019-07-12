@@ -28,14 +28,13 @@ function PlayState:enter(params)
     self.highScores = params.highScores
     self.ball = params.ball
     self.level = params.level
-
-    self.recoverPoints = 5000
-
+    self.recoverPoints = params.recoverPoints
+    
     -- give ball random starting velocity
     self.ball.dx = math.random(-200, 200)
     self.ball.dy = math.random(-50, -60)
 end
-
+    
 function PlayState:update(dt)
     if self.paused then
         if love.keyboard.wasPressed('space') then
@@ -94,6 +93,7 @@ function PlayState:update(dt)
 
                 -- multiply recover points by 2
                 self.recoverPoints = math.min(100000, self.recoverPoints * 2)
+                print (self.recoverPoints)
 
                 -- play recover sound effect
                 gSounds['recover']:play()

@@ -62,10 +62,16 @@ function PlayState:update(dt)
         --
 
         -- if we hit the paddle on its left side while moving left...
+        -- find the middle of the paddle and according to how far from the center
+        -- we hit the ball
+        -- give greater dx speed of the ball. if hit the ball on the left
+        -- give negative dx to make angle sharper
         if self.ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
             self.ball.dx = -50 + -(8 * (self.paddle.x + self.paddle.width / 2 - self.ball.x))
         
             -- else if we hit the paddle on its right side while moving right...
+            -- if we get to hit right of the center give greater positive dx speed 
+            -- to go to the right move sharply
         elseif self.ball.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
             self.ball.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width / 2 - self.ball.x))
         end
@@ -92,32 +98,34 @@ function PlayState:update(dt)
             --
 
             -- left edge; only check if we're moving right
+            -- if we hit the left side of the brick and we are coming from left
             if self.ball.x + 2 < brick.x and self.ball.dx > 0 then
                 
                 -- flip x velocity and reset position outside of brick
                 self.ball.dx = -self.ball.dx
-                self.ball.x = brick.x - 8
+                self.ball.x = brick.x - self.ball.width
             
             -- right edge; only check if we're moving left
             elseif self.ball.x + 6 > brick.x + brick.width and self.ball.dx < 0 then
-                
+             
                 -- flip x velocity and reset position outside of brick
                 self.ball.dx = -self.ball.dx
-                self.ball.x = brick.x + 32
-            
+                self.ball.x = brick.x + brick.width
+                -- 32 should be brick.width but I guess it turns out slower
             -- top edge if no X collisions, always check
             elseif self.ball.y < brick.y then
                 
                 -- flip y velocity and reset position outside of brick
                 self.ball.dy = -self.ball.dy
-                self.ball.y = brick.y - 8
-            
+                self.ball.y = brick.y - self.ball.height
+                -- 8 is ball.height or width 
             -- bottom edge if no X collisions or top collision, last possibility
             else
                 
                 -- flip y velocity and reset position outside of brick
                 self.ball.dy = -self.ball.dy
-                self.ball.y = brick.y + 16
+                self.ball.y = brick.y + brick.height
+                -- 16 should be brick.height for better style
             end
 
             -- slightly scale the y velocity to speed up the game

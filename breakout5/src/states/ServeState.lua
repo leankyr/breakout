@@ -36,6 +36,7 @@ function ServeState:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         -- pass in all important state info to the PlayState
+        -- like we did in the StartState 
         gStateMachine:change('play', {
             paddle = self.paddle,
             bricks = self.bricks,

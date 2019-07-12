@@ -241,6 +241,7 @@ function loadHighScores()
     -- iterate over each line in the file, filling in names and scores
     for line in love.filesystem.lines('breakout.lst') do
         if name then
+            -- to trunctuate the name in order to display it 
             scores[counter].name = string.sub(line, 1, 3)
         else
             scores[counter].score = tonumber(line)
@@ -281,7 +282,7 @@ end
 function displayFPS()
     -- simple FPS display across all states
     love.graphics.setFont(gFonts['small'])
-    love.graphics.setColor(0, 255, 0, 255)
+    love.graphics.setColor(0, 1, 0, 1)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
 end
 

@@ -53,6 +53,11 @@ end
     This function is specifically made to piece out the bricks from the
     sprite sheet. Since the sprite sheet has non-uniform sprites within,
     we have to return a subset of GenerateQuads.
+    Here we generate a subset of the sheet to get our quads
+    we get the 21 brick quad from the sheet this is why
+    first =1 and last = 21
+    GenerateQuads is actually the table we are  generating 
+    from the sheet (atlas)
 ]]
 function GenerateQuadsBricks(atlas)
     return table.slice(GenerateQuads(atlas, 32, 16), 1, 21)

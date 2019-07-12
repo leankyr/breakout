@@ -78,6 +78,7 @@ function PlayState:update(dt)
         if brick.inPlay and self.ball:collides(brick) then
 
             -- add to score
+            -- here we use the colors and tiers output from the brick class
             self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
             -- trigger the brick's hit function, which removes it from play
