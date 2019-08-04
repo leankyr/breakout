@@ -40,7 +40,8 @@ function HighScoreState:render()
 
         -- score number (1-10)
         love.graphics.printf(tostring(i) .. '.', VIRTUAL_WIDTH / 4, 
-            60 + i * 13, 50, 'left')
+            60 + i * 13, 50, 'left') -- 50 is offset from y axis
+                                     -- 60 + i * 13 is offset from x axis
 
         -- score name
         love.graphics.printf(name, VIRTUAL_WIDTH / 4 + 38, 

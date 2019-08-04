@@ -28,6 +28,8 @@ function ServeState:enter(params)
 
     -- init new ball (random color for fun)
     self.ball = Ball()
+    -- init PowerUp
+    self.powerUp = PowerUp()
     self.ball.skin = math.random(7)
 end
 
@@ -36,6 +38,9 @@ function ServeState:update(dt)
     self.paddle:update(dt)
     self.ball.x = self.paddle.x + (self.paddle.width / 2) - 4
     self.ball.y = self.paddle.y - 8
+
+    -- update the power up
+    self.powerUp:update(dt, self.score)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         -- pass in all important state info to the PlayState
@@ -47,7 +52,9 @@ function ServeState:update(dt)
             highScores = self.highScores,
             ball = self.ball,
             level = self.level,
-            recoverPoints = self.recoverPoints
+            recoverPoints = self.recoverPoints,
+            -- send the power up to the next state
+            powerUp = self.powerUp
         })
     end
 
@@ -59,6 +66,9 @@ end
 function ServeState:render()
     self.paddle:render()
     self.ball:render()
+
+    -- render the powerUp
+    self.powerUp:render()
 
     for k, brick in pairs(self.bricks) do
         brick:render()

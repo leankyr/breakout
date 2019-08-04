@@ -51,6 +51,7 @@ function love.load()
     love.graphics.setFont(gFonts['small'])
 
     -- load up the graphics we'll be using throughout our states
+    -- the ui and blocks pictures are not used here 
     gTextures = {
         ['background'] = love.graphics.newImage('graphics/background.png'),
         ['main'] = love.graphics.newImage('graphics/breakout.png'),
@@ -62,11 +63,12 @@ function love.load()
     -- Quads we will generate for all of our textures; Quads allow us
     -- to show only part of a texture and not the entire thing
     gFrames = {
-        ['arrows'] = GenerateQuads(gTextures['arrows'], 24, 24),
+        ['arrows'] = GenerateQuads(gTextures['arrows'], 24, 24), -- The arrows are divided evenly
         ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
         ['balls'] = GenerateQuadsBalls(gTextures['main']),
         ['bricks'] = GenerateQuadsBricks(gTextures['main']),
-        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9)
+        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9),  -- Here we do not want a couple of pixels
+        ['powerups'] = GenerateQuadsPowerUps(gTextures['main'])
     }
     
     -- initialize our virtual resolution, which will be rendered within our

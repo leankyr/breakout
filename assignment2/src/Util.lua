@@ -15,6 +15,8 @@
     width and a height for the tiles therein, split the texture into
     all of the quads by simply dividing it evenly.
 ]]
+
+-- So this function is used for even division
 function GenerateQuads(atlas, tilewidth, tileheight)
     local sheetWidth = atlas:getWidth() / tilewidth
     local sheetHeight = atlas:getHeight() / tileheight
@@ -120,6 +122,22 @@ function GenerateQuadsBalls(atlas)
     for i = 0, 2 do
         quads[counter] = love.graphics.newQuad(x, y, 8, 8, atlas:getDimensions())
         x = x + 8
+        counter = counter + 1
+    end
+
+    return quads
+end
+
+function GenerateQuadsPowerUps(atlas)
+    local x = 0  
+    local y = 192 -- 384 == 12 * 16 (in this specific picture)
+
+    local counter = 1
+    local quads = {}
+
+    for i = 0, 9 do
+        quads[counter] = love.graphics.newQuad(x, y, 16, 16, atlas:getDimensions())
+        x = x + 16
         counter = counter + 1
     end
 
