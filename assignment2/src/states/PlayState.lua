@@ -29,6 +29,7 @@ function PlayState:enter(params)
     self.ball = params.ball
     self.level = params.level
     self.recoverPoints = params.recoverPoints
+    self.flag = params.flag
     -- get the power up from the previous state
     self.powerUp = params.powerUp
     
@@ -36,8 +37,17 @@ function PlayState:enter(params)
     self.ball.dx = math.random(-200, 200)
     self.ball.dy = math.random(-50, -60)
 
+
+    -- drop interval for the powerUp in seconds after it appeared on screen
+    self.dropInterval = math.random(5, 15)
+    -- respawn interval
+    self.respawnInterval = 0
+    -- drop timer var
+    self.dropTimer = 0
+    -- respawn timer
+    self.respawnTimer = 0
     -- give power up velocity
-    self.powerUp.dy = 0.1
+    -- self.powerUp.dy = 0.1
 end
     
 function PlayState:update(dt)
@@ -58,6 +68,11 @@ function PlayState:update(dt)
     self.paddle:update(dt)
     self.ball:update(dt)
     self.powerUp:update(dt)
+      
+    if self.flag then
+      self.ball2:update(dt)
+    end
+
 
     if self.ball:collides(self.paddle) then
         -- raise ball above paddle in case it goes below it, then reverse dy
@@ -78,6 +93,106 @@ function PlayState:update(dt)
         end
 
         gSounds['paddle-hit']:play()
+    end
+
+
+    -- Could I ever put all this in a Class???
+
+    if self.powerUp.x >= 0 then
+        -- set the dropTimer up
+        self.dropTimer = self.dropTimer + dt
+        -- DEBUG: show the timer value
+        print('The dropTimer value is:', self.dropTimer)
+    end
+
+    if self.powerUp.x < 0 then
+        self.respawnTimer = self.respawnTimer + dt
+        -- DEBUG: show the respawnTimer value
+        print('The respawnTimer value is:', self.respawnTimer)
+    end
+    -- DEBUG: show the timer value
+    -- print('The timer value is:', self.timer)
+    -- check if we passed the time specified
+
+    if self.dropTimer > self.dropInterval then
+        self.powerUp.dy = 10
+    end
+    
+    if self.respawnTimer > self.respawnInterval then
+        self.powerUp.x = math.random(0, VIRTUAL_WIDTH)
+        self.powerUp.y = math.random(0, VIRTUAL_HEIGHT/2)
+        self.respawnTimer = 0
+        self.dropInterval = math.random(5, 15)
+        print('The drop interval is value is:', self.dropInterval)
+
+    end
+
+    -- PowerUp collission code
+    if self.powerUp:collides(self.paddle) then
+        -- play a sound
+        gSounds['paddle-hit']:play()
+
+        -- init the ball
+        self.ball2 = Ball()
+        self.ball2.x = self.paddle.x + (self.paddle.width / 2)
+        self.ball2.y = self.paddle.y - self.paddle.height
+        -- give ball random starting velocity
+        self.ball2.dx = math.random(-200, 200)
+        self.ball2.dy = math.random(-50, -60)
+        self.flag = true
+
+
+        -- Put it away from the screen
+        -- Instead in order to save memory I could 
+        -- erase this powerUp from memory like the previous lecture I guess
+        -- but now it might not be a problem I guess
+        self.powerUp.x = -25
+        self.powerUp.y = -25
+        -- Stop the spped
+        self.powerUp.dy = 0
+
+        -- set the timer to 0 again
+        self.dropTimer = 0
+        -- set the respawn interval
+        self.respawnInterval = math.random(10, 30)
+        print('The respawn interval is value is:', self.respawnInterval)
+    end
+    
+    -- if we lose the PowerUp
+    if self.powerUp.y > VIRTUAL_HEIGHT then
+        self.respawnInterval = math.random(10, 30)
+        -- set the value of the power to negative so 
+        -- that the respawn timer can work
+        self.powerUp.x = -25
+        self.powerUp.y = -25
+        -- DEBUG
+        print('The respawn interval is value is:', self.respawnInterval)
+        self.dropTimer = 0
+        self.powerUp.dy = 0
+    end
+
+    -- Dunnow
+    if self.flag then
+        if self.ball2:collides(self.paddle) then
+            -- raise ball above paddle in case it goes below it, then reverse dy
+            self.ball2.y = self.paddle.y - 8
+            self.ball2.dy = -self.ball2.dy
+
+            --
+            -- tweak angle of bounce based on where it hits the paddle
+            --
+
+            -- if we hit the paddle on its left side while moving left...
+            if self.ball2.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
+                self.ball2.dx = -50 + -(8 * (self.paddle.x + self.paddle.width / 2 - self.ball2.x))
+            
+            -- else if we hit the paddle on its right side while moving right...
+            elseif self.ball2.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
+                self.ball2.dx = 50 + (8 * math.abs(self.paddle.x + self.paddle.width / 2 - self.ball2.x))
+            end
+
+            gSounds['paddle-hit']:play()
+        end
     end
 
     -- detect collision across all bricks with the ball
@@ -131,6 +246,9 @@ function PlayState:update(dt)
 
             -- left edge; only check if we're moving right, and offset the check by a couple of pixels
             -- so that flush corner hits register as Y flips, not X flips
+            
+
+
             if self.ball.x + 2 < brick.x and self.ball.dx > 0 then
                 
                 -- flip x velocity and reset position outside of brick
@@ -167,6 +285,85 @@ function PlayState:update(dt)
 
             -- only allow colliding with one brick, for corners
             break
+        end
+        
+        -- Must refractor this to a function at some point in time 
+
+        if self.flag then
+            -- only check collision if we're in play
+            if brick.inPlay and self.ball2:collides(brick) then
+
+                -- add to score
+                self.score = self.score + (brick.tier * 200 + brick.color * 25)
+
+                -- trigger the brick's hit function, which removes it from play
+                brick:hit()
+
+                -- go to our victory screen if there are no more bricks left
+                if self:checkVictory() then
+                    gSounds['victory']:play()
+
+                    gStateMachine:change('victory', {
+                        level = self.level,
+                        paddle = self.paddle,
+                        health = self.health,
+                        score = self.score,
+                        highScores = self.highScores,
+                        ball = self.ball,
+                        recoverPoints = self.recoverPoints
+                    })
+                end
+
+                --
+                -- collision code for bricks
+                --
+                -- we check to see if the opposite side of our velocity is outside of the brick;
+                -- if it is, we trigger a collision on that side. else we're within the X + width of
+                -- the brick and should check to see if the top or bottom edge is outside of the brick,
+                -- colliding on the top or bottom accordingly 
+                --
+
+                -- left edge; only check if we're moving right, and offset the check by a couple of pixels
+                -- so that flush corner hits register as Y flips, not X flips
+            
+
+                if self.ball2.x + 2 < brick.x and self.ball2.dx > 0 then
+                    
+                    -- flip x velocity and reset position outside of brick
+                    self.ball2.dx = -self.ball2.dx
+                    self.ball2.x = brick.x - 8
+                
+                -- right edge; only check if we're moving left, , and offset the check by a couple of pixels
+                -- so that flush corner hits register as Y flips, not X flips
+                elseif self.ball2.x + 6 > brick.x + brick.width and self.ball2.dx < 0 then
+                    
+                    -- flip x velocity and reset position outside of brick
+                    self.ball2.dx = -self.ball2.dx
+                    self.ball2.x = brick.x + 32
+                
+                -- top edge if no X collisions, always check
+                elseif self.ball2.y < brick.y then
+                    
+                    -- flip y velocity and reset position outside of brick
+                    self.ball2.dy = -self.ball2.dy
+                    self.ball2.y = brick.y - 8
+                
+                -- bottom edge if no X collisions or top collision, last possibility
+                else
+                    
+                    -- flip y velocity and reset position outside of brick
+                    self.ball2.dy = -self.ball2.dy
+                    self.ball2.y = brick.y + 16
+                end
+
+                -- slightly scale the y velocity to speed up the game, capping at +- 150
+                if math.abs(self.ball2.dy) < 150 then
+                    self.ball2.dy = self.ball2.dy * 1.02
+                end
+
+                -- only allow colliding with one brick, for corners
+                break
+            end
         end
     end
 
@@ -218,7 +415,9 @@ function PlayState:render()
     self.ball:render()
     -- render the powerUp
     self.powerUp:render()
-
+    if self.flag then
+        self.ball2:render2()
+    end
     renderScore(self.score)
     renderHealth(self.health)
 
@@ -238,3 +437,9 @@ function PlayState:checkVictory()
 
     return true
 end
+
+
+function checkCollBricks(ball)
+
+end
+

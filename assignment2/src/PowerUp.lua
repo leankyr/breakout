@@ -8,13 +8,6 @@ function PowerUp:init()
     -- velocity variables
     self.dy = 0
     self.dx = 0
-    
-    -- initial position of power up
-    self.x = VIRTUAL_WIDTH - VIRTUAL_WIDTH + 20
-    self.y = VIRTUAL_HEIGHT - VIRTUAL_HEIGHT + 20 
-
-    -- self score for power up
-    self.spawnScore = 500
 end
 
 
@@ -47,31 +40,10 @@ end
 
 
 function PowerUp:update(dt)
-        --self.dy = 0.1
-        --self.x = self.x + self.dx * dt
-        -- print ('I am here!!! ')
-        self.y = self.y + 10 * dt
-
-        print (self.y)
-        --   end
---    -- allow ball to bounce off walls
---    if self.x <= 0 then
---        self.x = 0
---        self.dx = -self.dx
---        gSounds['wall-hit']:play()
---    end
---
---    if self.x >= VIRTUAL_WIDTH - 8 then
---        self.x = VIRTUAL_WIDTH - 8
---        self.dx = -self.dx
---        gSounds['wall-hit']:play()
---    end
---
---    if self.y <= 0 then
---        self.y = 0
---        self.dy = -self.dy
---        gSounds['wall-hit']:play()
---    end
+    -- update the powerUp
+    -- self.dy is the speed of the ball
+    self.y = self.y + self.dy * dt
+    print('The velocity is:', self.dy)
 end
 
 function PowerUp:render()

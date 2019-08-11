@@ -25,7 +25,7 @@ function ServeState:enter(params)
     self.highScores = params.highScores
     self.level = params.level
     self.recoverPoints = params.recoverPoints
-
+    self.flag = false
     -- init new ball (random color for fun)
     self.ball = Ball()
     -- init PowerUp
@@ -38,9 +38,18 @@ function ServeState:update(dt)
     self.paddle:update(dt)
     self.ball.x = self.paddle.x + (self.paddle.width / 2) - 4
     self.ball.y = self.paddle.y - 8
-
+    
+    -- set powerUp's initial position if score is 0
+    if self.score == 0 then
+        self.powerUp.x = VIRTUAL_WIDTH  - VIRTUAL_WIDTH + 20
+        self.powerUp.y = VIRTUAL_HEIGHT - VIRTUAL_HEIGHT + 20 
+    else
+        -- if it is not 0 just don't show it on the screen 
+        self.powerUp.x = -25
+        self.powerUp.y = -25
+    end
     -- update the power up
-    self.powerUp:update(dt, self.score)
+    -- self.powerUp:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         -- pass in all important state info to the PlayState
@@ -53,6 +62,7 @@ function ServeState:update(dt)
             ball = self.ball,
             level = self.level,
             recoverPoints = self.recoverPoints,
+            flag = self.flag,
             -- send the power up to the next state
             powerUp = self.powerUp
         })
