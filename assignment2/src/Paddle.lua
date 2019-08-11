@@ -30,7 +30,7 @@ function Paddle:init(skin)
     self.dx = 0
 
     -- starting dimensions
-    self.width = 128 -- was 64
+    self.width = 64 -- was 64
     self.height = 16
 
     -- the skin only has the effect of changing our color, used to offset us
@@ -39,7 +39,7 @@ function Paddle:init(skin)
 
     -- the variant is which of the four paddle sizes we currently are; 2
     -- is the starting size, as the smallest is too tough to start with
-    self.size = 4
+    self.size = 2
 end
 
 function Paddle:update(dt)
@@ -74,4 +74,26 @@ end
 function Paddle:render()
     love.graphics.draw(gTextures['main'], gFrames['paddles'][self.size + 4 * (self.skin - 1)],
         self.x, self.y)
+end
+
+function Paddle:changeSize(grow)
+   -- print ('I am here!!!')
+    if not grow then
+     --   print ('I got in the shrink block!!')
+        if self.size == 1 then
+       --     print('Cannot make smaller Paddle')
+        else
+         --   print ('I got in the block!!')
+            self.size = self.size - 1
+            self.width = self.width - 32
+        end
+    elseif grow then
+      --  print ('I got in the grow block!!')
+        if self.size == 4 then
+       --     print('Cannot make it bigger')
+        else
+            self.size = self.size + 1
+            self.width = self.width + 32 
+        end
+    end
 end

@@ -43,7 +43,7 @@ function PowerUp:update(dt)
     -- update the powerUp
     -- self.dy is the speed of the ball
     self.y = self.y + self.dy * dt
-    print('The velocity is:', self.dy)
+    -- print('The velocity is:', self.dy)
 end
 
 function PowerUp:render()

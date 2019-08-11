@@ -29,6 +29,7 @@ function PlayState:enter(params)
     self.ball = params.ball
     self.level = params.level
     self.recoverPoints = params.recoverPoints
+    self.widthPoints = params.widthPoints
     self.flag = params.flag
     -- get the power up from the previous state
     self.powerUp = params.powerUp
@@ -102,13 +103,13 @@ function PlayState:update(dt)
         -- set the dropTimer up
         self.dropTimer = self.dropTimer + dt
         -- DEBUG: show the timer value
-        print('The dropTimer value is:', self.dropTimer)
+        --print('The dropTimer value is:', self.dropTimer)
     end
 
     if self.powerUp.x < 0 then
         self.respawnTimer = self.respawnTimer + dt
         -- DEBUG: show the respawnTimer value
-        print('The respawnTimer value is:', self.respawnTimer)
+        --print('The respawnTimer value is:', self.respawnTimer)
     end
     -- DEBUG: show the timer value
     -- print('The timer value is:', self.timer)
@@ -123,7 +124,7 @@ function PlayState:update(dt)
         self.powerUp.y = math.random(0, VIRTUAL_HEIGHT/2)
         self.respawnTimer = 0
         self.dropInterval = math.random(5, 15)
-        print('The drop interval is value is:', self.dropInterval)
+        --print('The drop interval is value is:', self.dropInterval)
 
     end
 
@@ -155,7 +156,7 @@ function PlayState:update(dt)
         self.dropTimer = 0
         -- set the respawn interval
         self.respawnInterval = math.random(10, 30)
-        print('The respawn interval is value is:', self.respawnInterval)
+        --print('The respawn interval is value is:', self.respawnInterval)
     end
     
     -- if we lose the PowerUp
@@ -166,7 +167,7 @@ function PlayState:update(dt)
         self.powerUp.x = -25
         self.powerUp.y = -25
         -- DEBUG
-        print('The respawn interval is value is:', self.respawnInterval)
+        --print('The respawn interval is value is:', self.respawnInterval)
         self.dropTimer = 0
         self.powerUp.dy = 0
     end
@@ -208,18 +209,26 @@ function PlayState:update(dt)
             brick:hit()
 
             -- if we have enough points, recover a point of health
-            if self.score > self.recoverPoints then
+            if self.score >= self.recoverPoints then
                 -- can't go above 3 health
                 self.health = math.min(3, self.health + 1)
 
                 -- multiply recover points by 2
                 self.recoverPoints = math.min(100000, self.recoverPoints * 2)
-                print (self.recoverPoints)
 
                 -- play recover sound effect
                 gSounds['recover']:play()
             end
+            
+            -- print('Width points are:', self.widthPoints)
+            if self.score >= self.widthPoints then
+                
+                self.paddle:changeSize(true)
 
+                -- multiply width points by 4
+                self.widthPoints = math.min(100000, self.widthPoints * 2)
+
+            end
             -- go to our victory screen if there are no more bricks left
             if self:checkVictory() then
                 gSounds['victory']:play()
@@ -231,7 +240,8 @@ function PlayState:update(dt)
                     score = self.score,
                     highScores = self.highScores,
                     ball = self.ball,
-                    recoverPoints = self.recoverPoints
+                    recoverPoints = self.recoverPoints,
+                    widthPoints = self.widthPoints
                 })
             end
 
@@ -298,6 +308,26 @@ function PlayState:update(dt)
 
                 -- trigger the brick's hit function, which removes it from play
                 brick:hit()
+                -- if we have enough points, recover a point of health
+                if self.score >= self.recoverPoints then
+                    -- can't go above 3 health
+                    self.health = math.min(3, self.health + 1)
+
+                    -- multiply recover points by 2
+                    self.recoverPoints = math.min(100000, self.recoverPoints * 2)
+                    
+                    -- play recover sound effect
+                    gSounds['recover']:play()
+                end
+ 
+                if self.score >= self.widthPoints then
+                
+                    self.paddle:changeSize(true)
+
+                    -- multiply width points by 4
+                    self.widthPoints = math.min(100000, self.widthPoints * 2)
+
+                end
 
                 -- go to our victory screen if there are no more bricks left
                 if self:checkVictory() then
@@ -310,7 +340,8 @@ function PlayState:update(dt)
                         score = self.score,
                         highScores = self.highScores,
                         ball = self.ball,
-                        recoverPoints = self.recoverPoints
+                        recoverPoints = self.recoverPoints,
+                        widthPoints = self.widthPoints
                     })
                 end
 
@@ -370,6 +401,7 @@ function PlayState:update(dt)
     -- if ball goes below bounds, revert to serve state and decrease health
     if self.ball.y >= VIRTUAL_HEIGHT then
         self.health = self.health - 1
+        self.paddle:changeSize(false)
         gSounds['hurt']:play()
 
         if self.health == 0 then
@@ -385,7 +417,8 @@ function PlayState:update(dt)
                 score = self.score,
                 highScores = self.highScores,
                 level = self.level,
-                recoverPoints = self.recoverPoints
+                recoverPoints = self.recoverPoints,
+                widthPoints = self.widthPoints
             })
         end
     end
@@ -437,9 +470,3 @@ function PlayState:checkVictory()
 
     return true
 end
-
-
-function checkCollBricks(ball)
-
-end
-
