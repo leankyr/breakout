@@ -1,6 +1,6 @@
 PowerUp = Class{}
 
-function PowerUp:init()
+function PowerUp:init(index)
     -- positional and dimensional variables
     self.width = 8
     self.height = 8
@@ -8,6 +8,8 @@ function PowerUp:init()
     -- velocity variables
     self.dy = 0
     self.dx = 0
+    -- which power up
+    self.index = index
 end
 
 
@@ -49,7 +51,7 @@ end
 function PowerUp:render()
     -- gTexture is our global texture for all blocks
     -- gBallFrames is a table of quads mapping to each individual ball skin in the texture
-    love.graphics.draw(gTextures['main'], gFrames['powerups'][7],
+    love.graphics.draw(gTextures['main'], gFrames['powerups'][self.index],
         self.x, self.y)
 end
 

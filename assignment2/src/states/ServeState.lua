@@ -30,8 +30,14 @@ function ServeState:enter(params)
     -- init new ball (random color for fun)
     self.ball = Ball()
     -- init PowerUp
-    self.powerUp = PowerUp()
+    self.bPowerUp = PowerUp(7)
+    self.kPowerUp = PowerUp(10)
     self.ball.skin = math.random(7)
+
+    self.initPoseBx = math.random(0, VIRTUAL_WIDTH)
+    self.initPoseBy = math.random(0, VIRTUAL_HEIGHT/2)
+    self.initPoseKx = math.random(0, VIRTUAL_WIDTH)
+    self.initPoseKy = math.random(0, VIRTUAL_HEIGHT/2)
 end
 
 function ServeState:update(dt)
@@ -40,17 +46,24 @@ function ServeState:update(dt)
     self.ball.x = self.paddle.x + (self.paddle.width / 2) - 4
     self.ball.y = self.paddle.y - 8
     
-    -- set powerUp's initial position if score is 0
+    -- set bPowerUp's initial position if score is 0
     if self.score == 0 then
-        self.powerUp.x = VIRTUAL_WIDTH  - VIRTUAL_WIDTH + 20
-        self.powerUp.y = VIRTUAL_HEIGHT - VIRTUAL_HEIGHT + 20 
+      -- init ball powerUp
+      self.bPowerUp.x = self.initPoseBx
+      self.bPowerUp.y = self.initPoseBy    
+      -- init key powerUp
+      self.kPowerUp.x = self.initPoseKx
+      self.kPowerUp.y = self.initPoseKy
     else
         -- if it is not 0 just don't show it on the screen 
-        self.powerUp.x = -25
-        self.powerUp.y = -25
+      self.bPowerUp.x = -25
+      self.bPowerUp.y = -25
+      -- same for key PowerUp 
+      self.kPowerUp.x = -25
+      self.kPowerUp.y = -25
     end
     -- update the power up
-    -- self.powerUp:update(dt)
+    -- self.bPowerUp:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         -- pass in all important state info to the PlayState
@@ -66,7 +79,8 @@ function ServeState:update(dt)
             widthPoints = self.widthPoints,
             flag = self.flag,
             -- send the power up to the next state
-            powerUp = self.powerUp
+            bPowerUp = self.bPowerUp,
+            kPowerUp = self.kPowerUp
         })
     end
 
@@ -79,8 +93,10 @@ function ServeState:render()
     self.paddle:render()
     self.ball:render()
 
-    -- render the powerUp
-    self.powerUp:render()
+    -- render the bPowerUp
+    self.bPowerUp:render()
+    -- render the key PowerUp
+    self.kPowerUp:render()
 
     for k, brick in pairs(self.bricks) do
         brick:render()

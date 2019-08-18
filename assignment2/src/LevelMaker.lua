@@ -83,7 +83,12 @@ function LevelMaker.createMap(level)
                 -- flip the flag to true on an iteration we don't use it
                 skipFlag = not skipFlag
             end
-
+            
+            flag = false
+            dice = math.random(1, 6)
+            if dice == 6 then
+              flag = true
+            end
             b = Brick(
                 -- x-coordinate
                 (x-1)                   -- decrement x by 1 because tables are 1-indexed, coords are 0
@@ -92,7 +97,8 @@ function LevelMaker.createMap(level)
                 + (13 - numCols) * 16,  -- left-side padding for when there are fewer than 13 columns
                 
                 -- y-coordinate
-                y * 16                  -- just use y * 16, since we need top padding anyway
+                y * 16, -- just use y * 16, since we need top padding anyway
+                flag
             )
 
             -- if we're alternating, figure out which color/tier we're on
@@ -116,8 +122,19 @@ function LevelMaker.createMap(level)
 
             -- Lua's version of the 'continue' statement
             ::continue::
+
         end
     end 
+   
+--    keybricks = math.random(10,15)
+--
+--    for i = 1, keybricks do
+--    b = Brick(math.random(0, numCols - 1) * 32 + 8 + (13 - numCols) * 16, numRows * 16, true)
+--    table.insert(bricks, b)
+--    end
+
+
+
 
     -- in the event we didn't generate any bricks, try again
     if #bricks == 0 then

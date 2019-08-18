@@ -32,14 +32,15 @@ function PlayState:enter(params)
     self.widthPoints = params.widthPoints
     self.flag = params.flag
     -- get the power up from the previous state
-    self.powerUp = params.powerUp
+    self.bPowerUp = params.bPowerUp
+    self.kPowerUp = params.kPowerUp
     
     -- give ball random starting velocity
     self.ball.dx = math.random(-200, 200)
     self.ball.dy = math.random(-50, -60)
 
 
-    -- drop interval for the powerUp in seconds after it appeared on screen
+    -- drop interval for the bPowerUp in seconds after it appeared on screen
     self.dropInterval = math.random(5, 15)
     -- respawn interval
     self.respawnInterval = 0
@@ -48,7 +49,18 @@ function PlayState:enter(params)
     -- respawn timer
     self.respawnTimer = 0
     -- give power up velocity
-    -- self.powerUp.dy = 0.1
+    -- self.bPowerUp.dy = 0.1
+    -- drop interval for the bPowerUp in seconds after it appeared on screen
+    self.kDropInterval = math.random(5, 15)
+    -- respawn interval
+    self.kRespawnInterval = 0
+    -- drop timer var
+    self.kDropTimer = 0
+    -- respawn timer
+    self.kRespawnTimer = 0
+
+    -- has key powerUP
+    hasKey = false
 end
     
 function PlayState:update(dt)
@@ -68,7 +80,8 @@ function PlayState:update(dt)
     -- update positions based on velocity
     self.paddle:update(dt)
     self.ball:update(dt)
-    self.powerUp:update(dt)
+    self.bPowerUp:update(dt)
+    self.kPowerUp:update(dt)
       
     if self.flag then
       self.ball2:update(dt)
@@ -99,37 +112,65 @@ function PlayState:update(dt)
 
     -- Could I ever put all this in a Class???
 
-    if self.powerUp.x >= 0 then
+    if self.bPowerUp.x >= 0 then
         -- set the dropTimer up
         self.dropTimer = self.dropTimer + dt
         -- DEBUG: show the timer value
         --print('The dropTimer value is:', self.dropTimer)
     end
+    
+    if self.kPowerUp.x >= 0 then
+        -- set the dropTimer up
+        self.kDropTimer = self.kDropTimer + dt
+        -- DEBUG: show the timer value
+        --print('The dropTimer value is:', self.dropTimer)
+    end
 
-    if self.powerUp.x < 0 then
+
+    if self.bPowerUp.x < 0 then
         self.respawnTimer = self.respawnTimer + dt
         -- DEBUG: show the respawnTimer value
         --print('The respawnTimer value is:', self.respawnTimer)
     end
+    
+    if self.kPowerUp.x < 0 then
+        self.kRespawnTimer = self.kRespawnTimer + dt
+        -- DEBUG: show the respawnTimer value
+        --print('The respawnTimer value is:', self.respawnTimer)
+    end
+
     -- DEBUG: show the timer value
     -- print('The timer value is:', self.timer)
     -- check if we passed the time specified
 
     if self.dropTimer > self.dropInterval then
-        self.powerUp.dy = 10
+        self.bPowerUp.dy = 10
     end
     
+    if self.kDropTimer > self.kDropInterval then
+        self.kPowerUp.dy = 10
+    end
+
     if self.respawnTimer > self.respawnInterval then
-        self.powerUp.x = math.random(0, VIRTUAL_WIDTH)
-        self.powerUp.y = math.random(0, VIRTUAL_HEIGHT/2)
+        self.bPowerUp.x = math.random(0, VIRTUAL_WIDTH)
+        self.bPowerUp.y = math.random(0, VIRTUAL_HEIGHT/2)
         self.respawnTimer = 0
         self.dropInterval = math.random(5, 15)
         --print('The drop interval is value is:', self.dropInterval)
 
     end
+    
+    if self.kRespawnTimer > self.kRespawnInterval then
+        self.kPowerUp.x = math.random(0, VIRTUAL_WIDTH)
+        self.kPowerUp.y = math.random(0, VIRTUAL_HEIGHT/2)
+        self.kRespawnTimer = 0
+        self.kDropInterval = math.random(5, 15)
+        --print('The drop interval is value is:', self.dropInterval)
+
+    end
 
     -- PowerUp collission code
-    if self.powerUp:collides(self.paddle) then
+    if self.bPowerUp:collides(self.paddle) then
         -- play a sound
         gSounds['paddle-hit']:play()
 
@@ -145,12 +186,12 @@ function PlayState:update(dt)
 
         -- Put it away from the screen
         -- Instead in order to save memory I could 
-        -- erase this powerUp from memory like the previous lecture I guess
+        -- erase this bPowerUp from memory like the previous lecture I guess
         -- but now it might not be a problem I guess
-        self.powerUp.x = -25
-        self.powerUp.y = -25
+        self.bPowerUp.x = -25
+        self.bPowerUp.y = -25
         -- Stop the spped
-        self.powerUp.dy = 0
+        self.bPowerUp.dy = 0
 
         -- set the timer to 0 again
         self.dropTimer = 0
@@ -160,16 +201,28 @@ function PlayState:update(dt)
     end
     
     -- if we lose the PowerUp
-    if self.powerUp.y > VIRTUAL_HEIGHT then
+    if self.bPowerUp.y > VIRTUAL_HEIGHT then
         self.respawnInterval = math.random(10, 30)
         -- set the value of the power to negative so 
         -- that the respawn timer can work
-        self.powerUp.x = -25
-        self.powerUp.y = -25
+        self.bPowerUp.x = -25
+        self.bPowerUp.y = -25
         -- DEBUG
         --print('The respawn interval is value is:', self.respawnInterval)
         self.dropTimer = 0
-        self.powerUp.dy = 0
+        self.bPowerUp.dy = 0
+    end
+    
+    if self.kPowerUp.y > VIRTUAL_HEIGHT then
+        self.kRespawnInterval = math.random(10, 30)
+        -- set the value of the power to negative so 
+        -- that the respawn timer can work
+        self.kPowerUp.x = -25
+        self.kPowerUp.y = -25
+        -- DEBUG
+        --print('The respawn interval is value is:', self.respawnInterval)
+        self.kDropTimer = 0
+        self.kPowerUp.dy = 0
     end
 
     -- Dunnow
@@ -397,6 +450,24 @@ function PlayState:update(dt)
             end
         end
     end
+    
+    -- code for power up 2
+    if self.kPowerUp:collides(self.paddle) then
+      hasKey = true
+      
+      self.kPowerUp.x = -25
+      self.kPowerUp.y = -25
+      -- Stop the spped
+      self.kPowerUp.dy = 0
+
+      -- set the timer to 0 again
+      self.kDropTimer = 0
+        -- set the respawn interval
+      self.kRespawnInterval = math.random(10, 30)
+
+    end
+
+
 
     -- if ball goes below bounds, revert to serve state and decrease health
     if self.ball.y >= VIRTUAL_HEIGHT then
@@ -446,8 +517,11 @@ function PlayState:render()
 
     self.paddle:render()
     self.ball:render()
-    -- render the powerUp
-    self.powerUp:render()
+    -- render the bPowerUp
+    self.bPowerUp:render()
+    -- render the bPowerUp
+    self.kPowerUp:render()
+
     if self.flag then
         self.ball2:render2()
     end
